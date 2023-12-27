@@ -17,7 +17,7 @@ const communitySchema = new mongoose.Schema({
         unique: true
     },
     owner:{
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         required: true
     },
     createdAt: {

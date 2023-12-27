@@ -7,15 +7,15 @@ const memberSchema = new mongoose.Schema({
         unique: true
     },
     community:{
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         required: true
     },
     user:{
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         required: true
     },
     role:{
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         required: true
     },
     createdAt: {
