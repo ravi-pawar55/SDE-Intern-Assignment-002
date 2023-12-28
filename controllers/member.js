@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const {member} = require('../models/member');
 
-exports.createMember = async (req, res) => {
+exports.addMember = async (req, res) => {
     try{
         const {community,user,role} = req.body;
         if(!community || !user || !role){
@@ -31,7 +31,7 @@ exports.createMember = async (req, res) => {
     }
 }
 
-exports.deleteMember = async (req, res) => {
+exports.removeMember = async (req, res) => {
     try{
         const id = req.params.id;
         if(!id){

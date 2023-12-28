@@ -7,7 +7,7 @@ const {
     getAllMembers,
     getOwnedCommunities,
     getJoinedCommunities,
-} = require("../controllers/community"); // Fix the casing of the file name in the import statement
+} = require("../controllers/community"); 
 
 router.post("/", createCommunity);
 router.get("/", getAllCommunities);

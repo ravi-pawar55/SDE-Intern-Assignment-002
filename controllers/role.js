@@ -31,7 +31,7 @@ exports.createRole = async (req, res) => {
     }
 }
 
-exports.getRoles = async (req, res) => {
+exports.getAllRoles = async (req, res) => {
     try{
         const roles = await role.find();
         return res.status(200).json({
@@ -39,7 +39,7 @@ exports.getRoles = async (req, res) => {
             message:'Roles fetched successfully',
             meta:{
                 total:roles.length,
-                pages: total/10,
+                pages: Math.ceil(roles.length / 10),
                 page:1
             },
             data:roles

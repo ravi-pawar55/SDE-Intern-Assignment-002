@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const {community} = require('../models/community');
 const { Snowflake } = require('@theinternetfolks/snowflake');
+const {generateSlug} = require('../helpers/slug');
 
 exports.createCommunity = async (req, res) => {
     try{
@@ -14,7 +15,7 @@ exports.createCommunity = async (req, res) => {
         const newCommunity = await community.create({
             id: Snowflake.generate({timestamp:Date.now()}),
             name,
-            slug:'',
+            slug:generateSlug(name),
             owner:req.user.id,
             createdAt: Date.now(),
         });
@@ -32,7 +33,7 @@ exports.createCommunity = async (req, res) => {
     }
 }
 
-exports.getCommunitys = async (req, res) => {
+exports.getAllCommunities = async (req, res) => {
     try{
         const communitys = await community.find();
         return res.status(200).json({
@@ -40,7 +41,7 @@ exports.getCommunitys = async (req, res) => {
             content:{
                 meta:{
                     total:communitys.length,
-                    pages:1,
+                    pages:Math.ceil(communitys.length/10),
                     page:1
                 },
                 data:communitys
@@ -63,7 +64,7 @@ exports.getAllMembers = async (req, res) => {
             content:{
                 meta:{
                     total:communitys.length,
-                    pages:1,
+                    pages:Math.ceil(communitys.length/10),
                     page:1
                 },
                 data:communitys
@@ -77,7 +78,7 @@ exports.getAllMembers = async (req, res) => {
     }
 }
 
-exports.getMyOwnedCommunity = async (req, res) => {
+exports.getOwnedCommunities = async (req, res) => {
     try{
         const communitys = await community.find({owner:req.user.id});
         return res.status(200).json({
@@ -85,7 +86,7 @@ exports.getMyOwnedCommunity = async (req, res) => {
             content:{
                 meta:{
                     total:communitys.length,
-                    pages:1,
+                    pages:Math.ceil(communitys.length/10),
                     page:1
 
                 },
@@ -101,7 +102,7 @@ exports.getMyOwnedCommunity = async (req, res) => {
     }
 }
 
-exports.getMyJoinedCommunity = async (req, res) => {
+exports.getJoinedCommunities = async (req, res) => {
     try{
         const communitys = await community.find({members:req.user.id});
         return res.status(200).json({
@@ -109,7 +110,7 @@ exports.getMyJoinedCommunity = async (req, res) => {
             content:{
                 meta:{
                     total:communitys.length,
-                    pages:1,
+                    pages:Math.ceil(communitys.length/10),
                     page:1
                 },
                 data:communitys
