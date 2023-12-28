@@ -15,7 +15,6 @@ exports.signup = async (req, res) => {
                 message:'User already exists'
             })
         }
-        console.log(user);
         const id = Snowflake.generate({timestamp: Date.now()});
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = await User.create({
@@ -33,7 +32,7 @@ exports.signup = async (req, res) => {
     }catch(err){
         return res.status(500).json({
             success:false,
-            message:'User cannot created, please try again',
+            message:err.message,
         })
     }
 }
