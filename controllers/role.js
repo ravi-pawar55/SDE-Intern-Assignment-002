@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const {role} = require('../models/role');
+const Role = require('../models/role');
 const { Snowflake } = require('@theinternetfolks/snowflake');
 
 exports.createRole = async (req, res) => {
@@ -12,31 +12,29 @@ exports.createRole = async (req, res) => {
             })
         }
 
-        const newRole = await role.create({
+        const newRole = await Role.create({
             id: Snowflake.generate({timestamp: Date.now()}),
             name,
-            createdAt: Date.now().toISOString(),
-            updatedAt: Date.now().toISOString()
+            createdAt: Date.now(),
+            updatedAt: Date.now()
         });
         return res.status(200).json({
-            success:true,
-            message:'Role created successfully',
+            status:true,
             data:newRole
         })
     }catch(err){
         return res.status(500).json({
-            success:false,
-            message:'Role cannot created, please try again',
+            status:false,
+            message:err.message,
         })
     }
 }
 
 exports.getAllRoles = async (req, res) => {
     try{
-        const roles = await role.find();
+        const roles = await Role.find();
         return res.status(200).json({
-            success:true,
-            message:'Roles fetched successfully',
+            status:true,
             meta:{
                 total:roles.length,
                 pages: Math.ceil(roles.length / 10),
@@ -46,8 +44,8 @@ exports.getAllRoles = async (req, res) => {
         })
     }catch(err){
         return res.status(500).json({
-            success:false,
-            message:'Roles cannot fetched, please try again',
+            status:false,
+            message:err.message,
         })
     }
 }

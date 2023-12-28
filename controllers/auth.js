@@ -1,34 +1,33 @@
 const mongoose = require('mongoose');
-const {user} = require('../models/user');
+const User = require('../models/user');
 const { Snowflake } = require("@theinternetfolks/snowflake");
 const bcrypt = require('bcryptjs');
 const jwt = require("jsonwebtoken");
 require('dotenv').config();
-const Validate = require('validatorjs');
 
 exports.signup = async (req, res) => {
     try{
         const {name, email, password} = req.body;
-        const user = user.findOne({email});
+        const user = await User.findOne({email});
         if(user){
             return res.status(400).json({
                 status:false,
                 message:'User already exists'
             })
         }
+        console.log(user);
         const id = Snowflake.generate({timestamp: Date.now()});
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = await user.create({
+        const newUser = await User.create({
             id,
             name,
             email,
             password:hashedPassword,
             createdAt: Date.now(),
         });
-        delete newUser.password;
+        newUser.password = undefined;
         return res.status(200).json({
-            success:true,
-            message:'User created successfully',
+            status :true,
             data:newUser
         })
     }catch(err){
@@ -42,14 +41,13 @@ exports.signup = async (req, res) => {
 exports.signin = async (req, res) => {
     try{
         const {email, password} = req.body;
-        const user = user.findOne({email});
+        const user =  await User.findOne({email});
         if(!user){
             return res.status(400).json({
                 success:false,
                 message:'User does not exists'
             })
         }
-
         if(await bcrypt.compare(password,user.password)){
             const token = jwt.sign(
                 { email: user.email, id: user.id },
@@ -59,7 +57,7 @@ exports.signin = async (req, res) => {
                 }
             )
             user.token = token
-      delete user.password
+      user.password = undefined;
       // Set cookie for token and return success response
       const options = {
         expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
@@ -79,24 +77,23 @@ exports.signin = async (req, res) => {
     }catch(err){
         return res.status(500).json({
             success:false,
-            message:'User cannot logged in, please try again',
+            message:err.message
         })
     }
 }
 
 exports.getMe = async (req, res) => {
     try{
-        const user = await user.findById(req.user.id);
-        delete user.password;
+        const user = await User.findOne({id:req.user.id});
+        user.password = undefined
         return res.status(200).json({
-            success:true,
-            message:'User details fetched successfully',
+            status:true,
             data:user
         })
     }catch(err){
         return res.status(500).json({
-            success:false,
-            message:'User details cannot fetched, please try again',
+            status:false,
+            message:err.message
         })
     }
 }

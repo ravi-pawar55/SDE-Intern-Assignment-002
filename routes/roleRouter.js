@@ -6,7 +6,7 @@ const {
     getAllRoles
 } = require("../controllers/role"); 
 
-router.post("/create", createRole);
-router.get("/get", getAllRoles);
+router.post("/", createRole);
+router.get("/", getAllRoles);
 
 module.exports = router;

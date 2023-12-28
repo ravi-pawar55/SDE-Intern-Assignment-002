@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const {member} = require('../models/member');
-
+const Member = require('../models/member');
+const {Snowflake} = require('@theinternetfolks/snowflake');
 exports.addMember = async (req, res) => {
     try{
         const {community,user,role} = req.body;
@@ -10,7 +10,7 @@ exports.addMember = async (req, res) => {
                 message:'Please provide all required fields'
             })
         }
-        const newMember = await member.create({
+        const newMember = await Member.create({
             id: Snowflake.generate({timestamp:Date.now()}),
             community,
             user,
@@ -25,8 +25,8 @@ exports.addMember = async (req, res) => {
         })
     }catch(err){
         return res.status(500).json({
-            success:false,
-            message:'Member cannot created, please try again',
+            status:false,
+            message:err.message,
         })
     }
 }
@@ -40,14 +40,14 @@ exports.removeMember = async (req, res) => {
                 message:'Please provide all required fields'
             })
         }
-        const deletedMember = await member.deleteOne({id});
+        const deletedMember = await Member.deleteOne({id});
         return res.status(200).json({
             status:true,
         })
     }catch(err){
         return res.status(500).json({
-            success:false,
-            message:'Member cannot deleted, please try again',
+            status:false,
+            message:err.message,
         })
     }
 }

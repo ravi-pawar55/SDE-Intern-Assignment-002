@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
-const {community} = require('../models/community');
+const Community = require('../models/community');
 const { Snowflake } = require('@theinternetfolks/snowflake');
-const {generateSlug} = require('../helpers/slug');
+const generateSlug = require('../helpers/slug');
+const Member = require('../models/member');
 
 exports.createCommunity = async (req, res) => {
     try{
@@ -12,7 +13,7 @@ exports.createCommunity = async (req, res) => {
                 message:'Please provide all required fields'
             })
         }
-        const newCommunity = await community.create({
+        const newCommunity = await Community.create({
             id: Snowflake.generate({timestamp:Date.now()}),
             name,
             slug:generateSlug(name),
@@ -27,15 +28,15 @@ exports.createCommunity = async (req, res) => {
         })
     }catch(err){
         return res.status(500).json({
-            success:false,
-            message:'Community cannot created, please try again',
+            status:false,
+            message:err.message
         })
     }
 }
 
 exports.getAllCommunities = async (req, res) => {
     try{
-        const communitys = await community.find();
+        const communitys = await Community.find();
         return res.status(200).json({
             status:true,
             content:{
@@ -49,38 +50,43 @@ exports.getAllCommunities = async (req, res) => {
         })
     }catch(err){
         return res.status(500).json({
-            success:false,
-            message:'Communitys cannot fetched, please try again',
+            status:false,
+            message:err.message,
         })
     }
 }
 
 exports.getAllMembers = async (req, res) => {
     try{
-        const {communityId} = req.params;
-        const communitys = await community.findOne({id:communityId}).populate('members');
+        const {id} = req.params;
+        console.log(id);
+        const community = await Community.find({id:id});
+        const member = await Member.find({community:id});
         return res.status(200).json({
             status:true,
             content:{
                 meta:{
-                    total:communitys.length,
-                    pages:Math.ceil(communitys.length/10),
+                    total:member.length,
+                    pages:Math.ceil(member.length/10),
                     page:1
                 },
-                data:communitys
+                data:{
+                    community:community,
+                    member:member
+                }
             }
         })
     }catch(err){
         return res.status(500).json({
             success:false,
-            message:'Communitys cannot fetched, please try again',
+            message:err.message,
         })
     }
 }
 
 exports.getOwnedCommunities = async (req, res) => {
     try{
-        const communitys = await community.find({owner:req.user.id});
+        const communitys = await Community.find({owner:req.user.id});
         return res.status(200).json({
             status:true,
             content:{
@@ -97,14 +103,14 @@ exports.getOwnedCommunities = async (req, res) => {
     }catch(err){
         return res.status(500).json({
             success:false,
-            message:'Communitys cannot fetched, please try again',
+            message:err.message,
         })
     }
 }
 
 exports.getJoinedCommunities = async (req, res) => {
     try{
-        const communitys = await community.find({members:req.user.id});
+        const communitys = await Community.find({members:req.user.id});
         return res.status(200).json({
             status:true,
             content:{
@@ -119,7 +125,7 @@ exports.getJoinedCommunities = async (req, res) => {
     }catch(err){
         return res.status(500).json({
             success:false,
-            message:'Communitys cannot fetched, please try again',
+            message:err.message,
         })
     }
 }

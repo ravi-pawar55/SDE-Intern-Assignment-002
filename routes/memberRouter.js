@@ -6,7 +6,12 @@ const {
     removeMember
 } = require("../controllers/member");
 
-router.post("/add", addMember);
-router.delete("/remove", removeMember);
+const{
+    auth,
+    isCommunityAdmin
+} = require("../middlewares/auth");
+
+router.post("/", auth , isCommunityAdmin , addMember);
+router.delete("/:id", removeMember);
 
 module.exports = router;

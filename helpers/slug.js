@@ -9,3 +9,5 @@ function generateSlug(name) {
 
   return slug;
 }
+
+module.exports = generateSlug;

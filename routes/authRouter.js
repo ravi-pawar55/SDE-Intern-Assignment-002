@@ -7,8 +7,15 @@ const {
     getMe
 } = require("../controllers/auth");
 
+const {
+    validateSignup,
+    validateSignin
+} = require("../middlewares/validation");
+
+const { auth }= require("../middlewares/auth");
+
 router.post("/signup", signup);
 router.post("/signin", signin);
-router.get("/me", getMe);
+router.get("/me", auth, getMe);
 
 module.exports = router;

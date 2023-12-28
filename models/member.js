@@ -23,3 +23,7 @@ const memberSchema = new mongoose.Schema({
         default: Date.now
     }
 });
+
+const Member = mongoose.model('Member', memberSchema);
+
+module.exports = Member;
