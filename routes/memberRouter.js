@@ -8,10 +8,11 @@ const {
 
 const{
     auth,
-    isCommunityAdmin
+    isCommunityAdmin,
+    isAllowed
 } = require("../middlewares/auth");
 
-router.post("/", auth , isCommunityAdmin , addMember);
-router.delete("/:id", removeMember);
+router.post("/", auth , isCommunityAdmin, addMember);
+router.delete("/:id", auth , isAllowed, removeMember);
 
 module.exports = router;

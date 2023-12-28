@@ -58,3 +58,24 @@ exports.isCommunityAdmin = async (req, res, next) => {
         })
     }
 }
+
+exports.isAllowed = async (req, res, next) => {
+    try{
+        const {id} = req.user;
+        const member = await member.findOne({id:id});
+        if(member.role==='Community admin'||member.role==='Community Moderatr'){
+            next();
+        }else{
+            return res.status(401).json({
+                status:false,
+                message:'NOT_ALLOWED_ACCESS',
+            });
+        }
+
+    }catch(err){
+        return res.status(500).json({
+            status:false,
+            message:err.message,
+        })
+    }
+}   

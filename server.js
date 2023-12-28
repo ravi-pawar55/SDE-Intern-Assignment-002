@@ -17,8 +17,11 @@ app.use('/v1/role', roleRouter);
 app.use('/v1/community', communityRouter);
 app.use('/v1/member', memberRouter);
 
-app.get('/', (req, res) => {
-    res.send('API is running');
+app.get('/v1/', (req, res) => {
+    res.status(200).json({
+        status:true,
+        message:'Welcome to the API'
+    })
 });
 
 app.listen(process.env.PORT || 3001, () => {
